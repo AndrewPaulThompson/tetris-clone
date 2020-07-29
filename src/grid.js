@@ -1,13 +1,15 @@
-import { ROWS, COLUMNS, CELL_SIZE, SPACE_KEY, UP_KEY, LEFT_KEY, RIGHT_KEY, DOWN_KEY, C_KEY } from './constants'
+import { ROWS, COLUMNS, CELL_SIZE, GHOST_COLOUR } from './Constants'
 
 class Grid {
     constructor(sketch) {
         this.sketch = sketch
+        this.lines = 0
         this.grid = Array(ROWS).fill(null).map(x => Array(COLUMNS).fill(null))
+        this.ghost = Array(ROWS).fill(null).map(x => Array(COLUMNS).fill(null))
     }
 
     draw() {
-        this.sketch.background(220);
+        this.sketch.background(220)
         this.sketch.strokeWeight(0.5)
         this.sketch.noFill()
 
@@ -16,9 +18,49 @@ class Grid {
             for (let j = 0; j < this.grid[i].length; j++) {
                 let colour = this.grid[i][j] !== null ? this.grid[i][j] : '#dcdcdc'
                 this.sketch.fill(colour)
-                this.sketch.square(j * CELL_SIZE, i * CELL_SIZE, CELL_SIZE);
+                this.sketch.square(j * CELL_SIZE, i * CELL_SIZE, CELL_SIZE)
             }
         }
+    }
+
+    drawFall(shape) {
+        this.ghost = Array(ROWS).fill(null).map(x => Array(COLUMNS).fill(null))
+        let shapeY = shape.y
+        do {
+            shape.moveDown()
+            if (!this.canPlace(shape)) {
+                shape.moveUp()
+                shape.dropPoint = shape.y
+                break
+            }
+        } while (this.canPlace(shape))
+
+        for (let i = 0; i < shape.points.length; i++) {
+            for (let j = 0; j < shape.points[i].length; j++) {
+                if (shape.points[i][j] != null) {
+                    let gridX = shape.x + j
+                    let gridY = shape.y + i
+
+                    // Add them to the grid
+                    this.ghost[gridY][gridX] = GHOST_COLOUR
+                }
+            }
+        }
+
+        this.sketch.strokeWeight(0.5)
+        this.sketch.noFill()
+
+        // Grid
+        for (let i = 0; i < this.ghost.length; i++) {
+            for (let j = 0; j < this.ghost[i].length; j++) {
+                if (this.ghost[i][j] !== null) {
+                    this.sketch.fill(this.ghost[i][j])
+                    this.sketch.square(j * CELL_SIZE, i * CELL_SIZE, CELL_SIZE)
+                }
+            }
+        }
+
+        shape.y = shapeY
     }
 
     canPlace(shape) {
@@ -60,44 +102,9 @@ class Grid {
             if (!this.grid[i].includes(null)) {
                 this.grid.splice(i, 1)
                 this.grid.unshift(Array(COLUMNS).fill(null))
+                this.lines++
+                document.getElementById('pos').innerHTML = `lines cleared: ${this.lines}`
             }
-        }
-    }
-
-    handlePress(keyCode, shape) {
-        let bounds
-        switch (keyCode) {
-            case UP_KEY:
-                let oldPos = shape.points
-                shape.rotate()
-                if (!this.canPlace(shape)) {
-                    shape.points = oldPos
-                }
-                break;
-            case LEFT_KEY:
-                shape.moveLeft()
-                bounds = shape.getBounds()
-                if (bounds.left < 0 || !this.canPlace(shape)) shape.moveRight()
-                break;
-            case RIGHT_KEY:
-                shape.moveRight()
-                bounds = shape.getBounds()
-                if (bounds.right > COLUMNS - 1 || !this.canPlace(shape)) shape.moveLeft()
-                break;
-            case DOWN_KEY:
-                shape.moveDown()
-                if (!this.canPlace(shape)) {
-                    shape.moveUp()
-                }
-                break;
-            case SPACE_KEY:
-
-                break;
-            case C_KEY:
-
-                break;
-            default:
-                break;
         }
     }
 }

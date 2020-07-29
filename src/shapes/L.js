@@ -1,5 +1,5 @@
-import Shape from './shape'
-import { L_COLOUR } from './../constants'
+import Shape from './Shape'
+import { L_COLOUR } from './../Constants'
 
 class L extends Shape {
     constructor(sketch) {

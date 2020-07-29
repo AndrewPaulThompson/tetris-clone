@@ -7,6 +7,12 @@ class Shape {
         this.x = 0
         this.y = 0
         this.paused = false
+        this.dropPoint
+        this.held
+    }
+
+    isHeld() {
+        return this.held
     }
 
     resetBuffer() {
@@ -19,7 +25,6 @@ class Shape {
     
     moveDown() {
         this.y++
-        document.getElementById('pos').innerHTML = `x: ${this.x}, y: ${this.y}`
     }
     
     moveLeft() {

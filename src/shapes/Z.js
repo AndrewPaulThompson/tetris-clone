@@ -1,5 +1,5 @@
-import Shape from './shape'
-import { Z_COLOUR } from './../constants'
+import Shape from './Shape'
+import { Z_COLOUR } from './../Constants'
 
 class Z extends Shape {
     constructor(sketch) {

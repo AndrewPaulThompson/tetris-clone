@@ -11,6 +11,7 @@ export const O_COLOUR = '#f0f000'
 export const S_COLOUR = '#00f000'
 export const T_COLOUR = '#a000f0'
 export const Z_COLOUR = '#f00000'
+export const GHOST_COLOUR = '#8c8c8c'
 
 // Keyboard
 export const SPACE_KEY = 32
