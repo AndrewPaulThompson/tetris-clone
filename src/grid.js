@@ -1,31 +1,31 @@
 import { ROWS, COLUMNS, CELL_SIZE, GHOST_COLOUR } from './Constants'
 
 class Grid {
-    constructor(sketch) {
-        this.sketch = sketch
+    constructor() {
         this.lines = 0
         this.grid = Array(ROWS).fill(null).map(x => Array(COLUMNS).fill(null))
         this.ghost = Array(ROWS).fill(null).map(x => Array(COLUMNS).fill(null))
     }
 
-    draw() {
-        this.sketch.background(220)
-        this.sketch.strokeWeight(0.5)
-        this.sketch.noFill()
+    draw(sketch) {
+        sketch.background(220)
+        sketch.strokeWeight(0.5)
+        sketch.noFill()
 
         // Grid
         for (let i = 0; i < this.grid.length; i++) {
             for (let j = 0; j < this.grid[i].length; j++) {
                 let colour = this.grid[i][j] !== null ? this.grid[i][j] : '#dcdcdc'
-                this.sketch.fill(colour)
-                this.sketch.square(j * CELL_SIZE, i * CELL_SIZE, CELL_SIZE)
+                sketch.fill(colour)
+                sketch.square(j * CELL_SIZE, i * CELL_SIZE, CELL_SIZE)
             }
         }
     }
 
-    drawFall(shape) {
+    drawFall(sketch, shape) {
         this.ghost = Array(ROWS).fill(null).map(x => Array(COLUMNS).fill(null))
         let shapeY = shape.y
+
         do {
             shape.moveDown()
             if (!this.canPlace(shape)) {
@@ -47,20 +47,21 @@ class Grid {
             }
         }
 
-        this.sketch.strokeWeight(0.5)
-        this.sketch.noFill()
+        shape.y = shapeY
+
+        sketch.strokeWeight(0.5)
+        sketch.noFill()
 
         // Grid
         for (let i = 0; i < this.ghost.length; i++) {
             for (let j = 0; j < this.ghost[i].length; j++) {
                 if (this.ghost[i][j] !== null) {
-                    this.sketch.fill(this.ghost[i][j])
-                    this.sketch.square(j * CELL_SIZE, i * CELL_SIZE, CELL_SIZE)
+                    sketch.fill(this.ghost[i][j])
+                    sketch.square(j * CELL_SIZE, i * CELL_SIZE, CELL_SIZE)
                 }
             }
         }
 
-        shape.y = shapeY
     }
 
     canPlace(shape) {
@@ -73,7 +74,7 @@ class Grid {
 
                     // If the Y position of the shape on the grid is more than the height of the grid
                     // we're at the bottom of the grid
-                    if (gridY >= ROWS || this.grid[gridY][gridX] != null) {
+                    if (gridY >= ROWS || this.grid[gridY][gridX] != null || gridX < 0 || gridX >= COLUMNS) {
                         return false
                     }
                 }

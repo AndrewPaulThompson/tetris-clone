@@ -56,12 +56,12 @@ class Shape {
         }
     }
 
-    draw() {
+    draw(sketch) {
         for (let i = 0; i < this.points.length; i++) {
             for (let j = 0; j < this.points[i].length; j++) {
                 if (this.points[i][j] != null) {
-                    this.sketch.fill(this.points[i][j])
-                    this.sketch.square((this.x + j)*this.CELL_SIZE, (this.y + i)*this.CELL_SIZE, 40)
+                    sketch.fill(this.points[i][j])
+                    sketch.square((this.x + j)*this.CELL_SIZE, (this.y + i)*this.CELL_SIZE, 40)
                 }
             }
         }
